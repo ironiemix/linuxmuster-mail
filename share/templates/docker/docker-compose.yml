@@ -8,7 +8,7 @@ version: '2'
 services:
   mail:
     image: tvial/docker-mailserver:release-v6.1.0
-    hostname: mail
+    hostname: @@mailhostname@@
     domainname: @@domainname@@
     container_name: mail
     ports:

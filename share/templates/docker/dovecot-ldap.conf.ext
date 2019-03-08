@@ -7,7 +7,7 @@
 # in the linuxmuster.net v62 server!
 # See README.md on Github 
 auth_bind = yes
-dn = CN=global-binduser,OU=Management,OU=GLOBAL,@@basedn@@
+dn = uid=@@binduser@@,ou=accounts,@@basedn@@
 dnpass = @@binduserpw@@
 
 uris = ldaps://@@serverip@@:636
