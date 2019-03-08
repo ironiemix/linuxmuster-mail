@@ -75,7 +75,7 @@ declare -A mailgroups=(
 )
 
 # Alle uids ohne die Maschinenaccounts
-ALLUIDS=$(ldapsearch -x -H "ldaps://august.qg-moessingen.de:636" -b "dc=qg-moessingen,dc=de"  | grep uid: | awk '{print $2}' | grep -v \$$)
+ALLUIDS=$(ldapsearch -x -H "ldaps://meinserver.de:636" -b "linuxmuster,dc=lokal"  | grep uid: | awk '{print $2}' | grep -v \$$)
 
 for auid in $ALLUIDS; do
     # Primaere Gruppe
