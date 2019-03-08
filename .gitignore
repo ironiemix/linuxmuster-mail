@@ -1,0 +1,8 @@
+build-arch-stamp
+build-indep-stamp
+configure-stamp
+debian/.debhelper/
+debian/files
+debian/linuxmuster-mail.debhelper.log
+debian/linuxmuster-mail.substvars
+debian/linuxmuster-mail/

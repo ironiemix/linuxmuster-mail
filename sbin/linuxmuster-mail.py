@@ -2,7 +2,8 @@
 #
 # linuxmuster-mail.py
 # thomas@linuxmuster.net
-# 20180209
+# frank@linuxmuster.net
+# 20190308
 #
 
 import configparser
@@ -51,8 +52,6 @@ if (config == None):
     usage()
     sys.exit()
 
-# certificate
-mailkey = '/etc/linuxmuster/ssl/mail.key.pem'
 # template dirs
 tpldir = '/usr/share/linuxmuster-mail/templates'
 dockertpldir = tpldir + '/docker'
@@ -98,23 +97,15 @@ def writeTextfile(tfile, content, flag):
 def mailSetup():
     # read ini file
     print('### linuxmuster-mail: mailserver setup')
-    if not os.path.isfile(mailkey):
-        print('Certificate file ' + mailkey + ' is missing!')
-        return 1
-    else:
-        print('Certificate file ' + mailkey + ' found!')
-    # permissions
-    os.system('chgrp docker ' + mailkey)
-    os.system('chmod 640 ' + mailkey)
     try:
         print('Reading setup data ...')
         setup = configparser.ConfigParser(inline_comment_prefixes=('#', ';'))
         setup.read(config)
+        mailhostname = setup.get('setup', 'mailhostname')
         domainname = setup.get('setup', 'domainname')
         serverip = setup.get('setup', 'serverip')
-        firewallip = setup.get('setup', 'firewallip')
-        mailip = setup.get('setup', 'mailip')
         binduserpw = setup.get('setup', 'binduserpw')
+        binduser = setup.get('setup', 'binduser')
         basedn = setup.get('setup', 'basedn')
         smtprelay = setup.get('setup', 'smtprelay')
         smtpuser = setup.get('setup', 'smtpuser')
@@ -138,16 +129,20 @@ def mailSetup():
     for f in os.listdir(dockertpldir):
         infile = dockertpldir + '/' + f
         # read template
+        print(infile)
         rc, content = readTextfile(infile)
         if not rc:
             return 1
         # extract oufile path from first line
         firstline = re.findall(r'# .*\n', content)[0]
         outfile = firstline.partition(' ')[2].replace('\n', '')
+        print(outfile)
         # replace placeholders
+        content = content.replace('@@mailhostname@@', mailhostname)
         content = content.replace('@@serverip@@', serverip)
         content = content.replace('@@basedn@@', basedn)
         content = content.replace('@@binduserpw@@', binduserpw)
+        content = content.replace('@@binduser@@', binduser)
         content = content.replace('@@domainname@@', domainname)
         content = content.replace('@@smtprelay@@', smtprelay)
         content = content.replace('@@smtpauth@@', smtpauth)
@@ -162,6 +157,9 @@ def mailSetup():
             if not writeTextfile(outfile, content, 'w'):
                 return 1
             outfile = outfile.replace('ldap-groups.cf', 'ldap-aliases.cf')
+            if not writeTextfile(outfile, content, 'w'):
+                return 1
+            outfile = outfile.replace('ldap-aliases.cf', 'ldap-domains.cf')
             if not writeTextfile(outfile, content, 'w'):
                 return 1
     # pull docker image

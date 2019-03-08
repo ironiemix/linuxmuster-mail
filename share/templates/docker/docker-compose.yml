@@ -25,9 +25,9 @@ services:
     - ./config/postfix/ldap-users.cf:/etc/postfix/ldap-users.cf:ro
     - ./config/postfix/ldap-groups.cf:/etc/postfix/ldap-groups.cf:ro
     - ./config/postfix/ldap-aliases.cf:/etc/postfix/ldap-aliases.cf:ro
+    - ./config/postfix/ldap-domains.cf:/etc/postfix/ldap-domains.cf:ro
     - ./config/saslauthd/saslauthd.conf:/etc/saslauthd.conf:ro
-    - /etc/linuxmuster/ssl:/tmp/ssl:ro
-    - /etc/linuxmuster/ssl/cacert.pem:/etc/ssl/certs/cacert.pem:ro
+    - ./ssl:/etc/letsencrypt
     environment:
     - ENABLE_SPAMASSASSIN=0
     - ENABLE_CLAMAV=0
@@ -36,23 +36,21 @@ services:
     - ONE_DIR=1
     - DMS_DEBUG=0
     - ENABLE_LDAP=1
-    - LDAP_SERVER_HOST=@@serverip@@
-    - LDAP_SEARCH_BASE=OU=SCHOOLS,@@basedn@@
-    - LDAP_BIND_DN=CN=global-binduser,OU=Management,OU=GLOBAL,@@basedn@@
+    - LDAP_SERVER_HOST=ldaps://@@serverip@@:636
+    - LDAP_SEARCH_BASE=@@basedn@@
+    - LDAP_BIND_DN=uid=@@binduser@@,ou=accounts,@@basedn@@
     - LDAP_BIND_PW=@@binduserpw@@
-    - DOVECOT_PASS_FILTER="(&(sAMAccountName=%u)(objectClass=person))"
-    - DOVECOT_USER_FILTER="(&(sAMAccountName=%u)(objectClass=person))"
+    - DOVECOT_PASS_FILTER=(&(objectclass=person)(mail=%u))
+    - DOVECOT_USER_FILTER=(&(objectclass=person)(mail=%u))
     - ENABLE_SASLAUTHD=1
     - SASLAUTHD_MECHANISMS=ldap
-    - SASLAUTHD_LDAP_SERVER=@@serverip@@
-    - SASLAUTHD_LDAP_BIND_DN=CN=global-binduser,OU=Management,OU=GLOBAL,@@basedn@@
+    - SASLAUTHD_LDAP_SERVER=ldaps://@@serverip@@:636
+    - SASLAUTHD_LDAP_BIND_DN=uid=@@binduser@@,ou=accounts,@@basedn@@
     - SASLAUTHD_LDAP_PASSWORD=@@binduserpw@@
-    - SASLAUTHD_LDAP_SEARCH_BASE=OU=SCHOOLS,@@basedn@@
-    - SASLAUTHD_LDAP_FILTER="(&(sAMAccountName=%u)(objectClass=person))"
+    - SASLAUTHD_LDAP_SEARCH_BASE=@@basedn@@
+    - SASLAUTHD_LDAP_FILTER=uid=%u
     - POSTMASTER_ADDRESS=postmaster@@@domainname@@
-    - SSL_TYPE=manual
-    - SSL_CERT_PATH=/tmp/ssl/mail.cert.pem
-    - SSL_KEY_PATH=/tmp/ssl/mail.key.pem
+    - SSL_TYPE=letsencrypt
     - AWS_SES_HOST=@@smtprelay@@
     - AWS_SES_USERPASS=@@smtpauth@@
     cap_add:
