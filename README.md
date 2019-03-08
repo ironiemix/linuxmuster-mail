@@ -53,4 +53,40 @@ smtppw=
 
 ## Weitere Hinweise
 
-Benutzername für alle Dienste auf dem Mailserver ist die vollständige Mailadresse wie iim LDAP hinterlegt, allerdings muss die Maildomain dieselbe sein wie in der Docker-Mailserver Konfiguration. Das Passwort wird gegen den LDAP abgeglichen. Sollte mit jedem Mailclient möglich sein.
+Benutzername für alle Dienste auf dem Mailserver ist die vollständige Mailadresse wie iim LDAP hinterlegt, allerdings muss die im LDAP hinterlegte Maildomain dieselbe sein wie in der Docker-Mailserver Konfiguration. Das Passwort wird gegen den LDAP abgeglichen. bei mir stimmen die Maildomain und die interne Domain überhaupt nicht überein, außerdem fliegen die Mailadressen ja eh ständig aus dem LDAP, also pfeiefe ich das mit eine Skript nach den sophomorik-Operationen wieder rein.
+
+```
+!/bin/bash
+
+MAILDOMAIN="qgmail.de"
+
+# Groups to set mail for
+# Es bekommen nur Gruppen die =1 sind
+# die Mailadressen gesetzt.
+declare -A mailgroups=( 
+ [5a]=0   [5b]=0   [5c]=0  [5d]=0
+ [6a]=1   [6b]=1   [6c]=0  [6d]=1
+ [7a]=1   [7b]=1   [7c]=1  [7d]=1
+ [8a]=1   [8b]=1   [8c]=1  [8d]=1
+ [9a]=1   [9b]=1   [9c]=1  [9d]=1
+ [10a]=1  [10b]=1  [10c]=1 [10d]=1
+ [ks1]=1  [ks2]=1 
+ [mailtest]=1
+)
+
+# Alle uids ohne die Maschinenaccounts
+ALLUIDS=$(ldapsearch -x -H "ldaps://august.qg-moessingen.de:636" -b "dc=qg-moessingen,dc=de"  | grep uid: | awk '{print $2}' | grep -v \$$)
+
+for auid in $ALLUIDS; do
+    # Primaere Gruppe
+    key=$(id -gn $auid)
+    # Soll die Mails bekommen?
+    if [ "${mailgroups[$key]}" == "1" ]; then
+        echo "Setting mail from user $auid in group $key to ${auid}@$MAILDOMAIN"
+        mailaddress=${auid}@${MAILDOMAIN}
+        smbldap-usermod -M $mailaddress $auid
+    fi
+done
+
+```
+das kann man z.B. einfach dahingehend erweitern, dass man für SuS und Lehrer verschiende Domains verwendet (was ich benötigte).
