@@ -1,20 +1,23 @@
 [setup]
+#
+# Keine Anfuehrungzeichen um die Werte!
+#
 # Hostname des docker-mailservers
-mailhostname="mbox"
+mailhostname=mbox
 # Maildomain der Mailadressen
-domainname="mymaildomain.de"
+domainname=mymaildomain.de
 # IP Adresse oder Servername des LDAP Servers
 # (also des LMN6.2 Servers)
-serverip="192.168.111.111"
+serverip=192.168.111.111
 # dieser Benutzer muss auf dem Server angelegt werden und
 # in der Konfiguration des slapd 
 # mit den entsprechenden Rechten versehen werden
-binduser="mailserverldapuser"
-binduserpw="geheim"
+binduser=mailserverldapuser
+binduserpw=geheim"
 # BaseDN wie auf dem Server in der Datei 
 # /var/lib/linuxmuster/network.settings
 # hinterlegt
-basedn="dc=linuxmuster,dc=lokal"
+basedn=dc=linuxmuster,dc=lokal
 # Wenn die Konfiguration einen Smarthost
 # zum Mailversand verwenden soll, sonst leer
 smtprelay=
