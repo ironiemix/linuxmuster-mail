@@ -1,10 +1,15 @@
-# linuxmuster-mail
+# linuxmuster-mail für linuxmuster.net 6.2
 
-Scripts and configuration files to setup a full featured docker mailcontainer for linuxmuster.net.
-
-Skripte und Konfigurationsdateien für linuxmuster.net zur Einrichtung eines voll ausgestatteten Docker-Mailservers.
+Skripte und Konfigurationsdateien für linuxmuster.net zur Einrichtung eines voll ausgestatteten Docker-Mailservers mit Anbindung an den LDAP des linuxmuster.net 6.2 Servers.
 
 - Verwendet das [Dockerimage](https://hub.docker.com/r/tvial/docker-mailserver/) von [Thomas Vial](https://hub.docker.com/r/tvial).
+
+## Voraussetzungen 
+
+Ein ubuntu/debian Server mit docker und docker-compose. Getestet mit ubuntu 18.04, docker ce 19.03 und docker-compose 1.24.0-rc1
+
+
+
 
 - Legt unterhalb von _/srv/docker/linuxmuster-mail_
   - die Docker-Steuerdatei  [docker-compose.yml](https://github.com/linuxmuster/linuxmuster-mail/blob/master/share/templates/docker/docker-compose.yml) und diverse Bashskripte an.
