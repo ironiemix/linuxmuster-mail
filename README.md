@@ -12,7 +12,7 @@ Skripte und Konfigurationsdateien für linuxmuster.net zur Einrichtung eines vol
 - Auf dem Docker Server sollte ein letsecrypt Zertifikat für den Hostnamen des Mailservers vorhanden sein, z.B. indem man einen Apache Webserver und dehydrated installiert. Das Zertifikat sollte nach jeder Erneuerung in das Verzeichnis ``/srv/docker/linuxmuster-mail/ssl/live/<hostname>/*`` kopiert werden, bei dehydrated geht das elegant mit einem hook.
 - Auf dem linuxmuster.net Server (6.2) muss ein Benutzer eingerichtet werden, der es dem dovecot des Mailserver-Containers ermöglicht, auf die Passwörter des LDAP zuzugreifen.
   - Am besten legt man einfach einen Lehrer an, z.B. ``ldaplehrer`` mit einem Passwort ``sehrgeheim``
-  - In der Datei /etc/ldap/slapd.conf sucht man nun die Zeile mit dem Eintrag  ``userPassword`` unterhalb derer sich bereits einige ZUgriffreglen finden. Dort trägt man eine Zeile zur Leseberechtigung (read) des eben angelegten Benutzers ein und startet dann den LDAP neu (``/etc/init.d/slapd restart``). Die BaseDN muss natürlich passend angepasst werden.
+  - In der Datei /etc/ldap/slapd.conf sucht man nun die Zeile mit dem Eintrag  ``userPassword`` unterhalb derer sich bereits einige Zugriffsregeln finden. Dort trägt man eine Zeile zur Leseberechtigung (read) des eben angelegten Benutzers ein und startet dann den LDAP neu (``/etc/init.d/slapd restart``). Die BaseDN muss natürlich passend angepasst werden, die Benutzerdn ist letztlich immer ``uid=benutzer,ou=accounts,BASEDN``.
 ```
 # Limits Access:
 access to attrs=sambaLMPassword,sambaNTPassword,sambaPwdLastSet,sambaPwdMustChange,sambaAcctFlags,userPassword
@@ -53,7 +53,7 @@ smtppw=
 
 ## Weitere Hinweise
 
-Benutzername für alle Dienste auf dem Mailserver ist die vollständige Mailadresse wie iim LDAP hinterlegt, allerdings muss die im LDAP hinterlegte Maildomain dieselbe sein wie in der Docker-Mailserver Konfiguration. Das Passwort wird gegen den LDAP abgeglichen. bei mir stimmen die Maildomain und die interne Domain überhaupt nicht überein, außerdem fliegen die Mailadressen ja eh ständig aus dem LDAP, also pfeiefe ich das mit eine Skript nach den sophomorik-Operationen wieder rein.
+Benutzername für alle Dienste auf dem Mailserver ist die vollständige Mailadresse wie iim LDAP hinterlegt, allerdings muss die im LDAP hinterlegte Maildomain dieselbe sein wie in der Docker-Mailserver Konfiguration. Das Passwort wird gegen den LDAP abgeglichen. bei mir stimmen die Maildomain und die interne Domain überhaupt nicht überein, außerdem fliegen die Mailadressen ja eh ständig aus dem LDAP, also pfeife ich das mit eine Skript nach den sophomorix-Operationen wieder rein.
 
 ```
 !/bin/bash
